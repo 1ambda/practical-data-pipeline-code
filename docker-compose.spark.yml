@@ -6,9 +6,12 @@ services:
     ports:
       - "8080:8080"
       - "7077:7077"
+      - "4040:4040"
     volumes:
       - ./_script/docker-spark/apps:/opt/spark-apps
       - ./_script/docker-spark/data:/opt/spark-data
+      - ./_script/docker-spark/conf:/spark/conf
+      - /tmp/spark-events-local:/tmp/spark-events
     environment:
       - INIT_DAEMON_STEP=setup_spark
 
@@ -22,6 +25,8 @@ services:
     volumes:
       - ./_script/docker-spark/apps:/opt/spark-apps
       - ./_script/docker-spark/data:/opt/spark-data
+      - ./_script/docker-spark/conf:/spark/conf
+      - /tmp/spark-events-local:/tmp/spark-events
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
   spark-worker-2:
@@ -35,6 +40,8 @@ services:
     volumes:
       - ./_script/docker-spark/apps:/opt/spark-apps
       - ./_script/docker-spark/data:/opt/spark-data
+      - ./_script/docker-spark/conf:/spark/conf
+      - /tmp/spark-events-local:/tmp/spark-events
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
 
@@ -46,9 +53,10 @@ services:
     ports:
       - "18081:18081"
     volumes:
-      - /tmp/spark-events-local:/tmp/spark-events
       - ./_script/docker-spark/apps:/opt/spark-apps
       - ./_script/docker-spark/data:/opt/spark-data
+      - ./_script/docker-spark/conf:/spark/conf
+      - /tmp/spark-events-local:/tmp/spark-events
   storage-postgres:
     image: postgres:11.7-alpine
     container_name: storage-postgers
