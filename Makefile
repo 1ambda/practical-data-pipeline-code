@@ -37,6 +37,17 @@ compose.spark: compose.prepare
 		-f docker-compose.spark.yml \
 		up
 
+.PHONY: compose.kafka
+compose.kafka: compose.prepare
+	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Running docker-compose"
+	@ docker stop $(docker ps -a -q) || true
+	@ docker rm -f $(docker ps -a -q) || true
+	@ docker volume rm $(docker volume ls -f dangling=true -q) || true
+	@ docker compose -f docker-compose.kafka.yml rm -fsv || true
+	@ DOCKER_HOST_IP=$(DOCKER_HOST_IP) docker compose \
+		-f docker-compose.kafka.yml \
+		up
+
 .PHONY: compose.clean
 compose.clean:
 	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Starting: Cleaning docker resources"
