@@ -48,6 +48,17 @@ compose.kafka: compose.prepare
 		-f docker-compose.kafka.yml \
 		up
 
+.PHONY: compose.metastore
+compose.metastore: compose.prepare
+	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Running docker-compose"
+	@ docker stop $(docker ps -a -q) || true
+	@ docker rm -f $(docker ps -a -q) || true
+	@ docker volume rm $(docker volume ls -f dangling=true -q) || true
+	@ docker compose -f docker-compose.metastore.yml rm -fsv || true
+	@ DOCKER_HOST_IP=$(DOCKER_HOST_IP) docker compose \
+		-f docker-compose.metastore.yml \
+		up --build
+
 .PHONY: compose.clean
 compose.clean:
 	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Starting: Cleaning docker resources"
