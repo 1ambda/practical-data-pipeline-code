@@ -1,0 +1,8 @@
+rootProject.name = 'project-spark'
+
+include ':module-core',
+        ':module-infra-spark',
+        ':module-infra-dynamo',
+        ':service-batch-discovery',
+        ':service-batch-statistics'
+

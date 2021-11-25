@@ -1,0 +1,32 @@
+dependencies {
+
+    // shared
+    implementation project(path: ':module-core')
+
+    // TODO: provided is not transitive, need to use `apply from`
+    // spark:
+    // - use provided dependencies when building in CI.
+    // - use compile dependencies for local testing
+    // if (System.env.PIPELINE_BRANCH) {
+    //   ...
+    // }
+
+    api("org.apache.spark:spark-core_${scalaSparkVersion}:${sparkVersion}") {
+        exclude group: 'org.apache.hadoop', module: 'hadoop-client'
+    }
+    api("org.apache.spark:spark-sql_${scalaSparkVersion}:${sparkVersion}")
+    api("org.apache.spark:spark-hive_${scalaSparkVersion}:${sparkVersion}")
+    api("org.apache.spark:spark-mllib_${scalaSparkVersion}:${sparkVersion}")
+    api("org.apache.spark:spark-streaming_${scalaSparkVersion}:${sparkVersion}")
+    api("org.apache.spark:spark-avro_${scalaSparkVersion}:${sparkVersion}")
+    api("org.apache.spark:spark-sql-kafka-0-10_${scalaSparkVersion}:${sparkVersion}")
+
+    api("org.apache.hadoop:hadoop-aws:${awsHadoopVersion}")
+
+    api("org.apache.avro:avro:$avroVersion")
+    api("org.apache.kafka:kafka-clients:${kafkaClientVersion}")
+    api("za.co.absa:abris_${scalaSparkVersion}:4.2.0")
+    api("io.confluent:kafka-avro-serializer:$confluentVersion") {
+        exclude group: "org.apache.kafka", module: "kafka-clients"
+    }
+}

@@ -1,0 +1,37 @@
+def versionValue = file("VERSION").text.trim()
+project.version = versionValue
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+dependencies {
+    // shared
+    implementation project(path: ':module-core')
+    implementation project(path: ':module-infra-spark')
+
+    // custom
+    // TODO
+}
+
+mainClassName = 'test'
+run.classpath = sourceSets.main.runtimeClasspath
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Build-Jdk": System.getProperty('java.version'),
+        )
+    }
+
+}
+
+shadowJar {
+    zip64 = true
+    exclude 'META-INF/**'
+    baseName = project.name
+    mergeServiceFiles()
+}
+
+assemble.dependsOn(shadowJar)

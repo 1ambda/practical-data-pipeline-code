@@ -1,0 +1,37 @@
+def versionValue = file("VERSION").text.trim()
+project.version = versionValue
+
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+dependencies {
+    // shared
+    implementation project(path: ':module-core')
+    implementation project(path: ':module-infra-spark')
+}
+
+mainClassName = 'test'
+run.classpath = sourceSets.main.runtimeClasspath
+
+jar {
+    manifest {
+        attributes(
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Build-Jdk": System.getProperty('java.version'),
+        )
+    }
+
+}
+
+shadowJar {
+    zip64 = true
+    exclude 'META-INF/**'
+    baseName = project.name
+    // Spark SQL Streaming 은 META-INF 를 조합해 Datasource 여부를 판별하므로 Uber Jar 로는 해결이 불가능하고,
+    // - https://stackoverflow.com/questions/48011941/why-does-formatkafka-fail-with-failed-to-find-data-source-kafka-even-wi
+    // - https://stackoverflow.com/questions/32887966/shadow-plugin-gradle-what-does-mergeservicefiles-do
+    mergeServiceFiles()
+}
+
+assemble.dependsOn(shadowJar)

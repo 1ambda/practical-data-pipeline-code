@@ -1,0 +1,15 @@
+dependencies {
+    // custom
+    // https://mvnrepository.com/artifact/org.apache.flink/flink-avro-confluent-registry
+    // https://mvnrepository.com/artifact/org.apache.avro/avro
+    api("org.apache.avro:avro:${avroVersion}")
+
+    api("org.json4s:json4s-jackson_${scalaSparkVersion}:${json4sVersion}")
+    api("org.json4s:json4s-ext_${scalaSparkVersion}:${json4sVersion}")
+
+    // logging
+    api("org.apache.logging.log4j:log4j-api:${log4jVersion}")
+    api("org.apache.logging.log4j:log4j-core:${log4jVersion}")
+    api("org.apache.logging.log4j:log4j-slf4j-impl:${log4jVersion}")
+    api("org.slf4j:slf4j-log4j12:${slf4jVersion}")
+}

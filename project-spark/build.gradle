@@ -1,0 +1,164 @@
+buildscript {
+    ext {
+        gradleShadowVersion = '6.1.0'
+        gradleTestLoggerVersion = '2.1.0'
+        gradleScalaTestVersion = '0.30'
+        gradleVersioningPluginVersion = '2.8.2'
+        gradleAvroPluginVersion = '1.2.0'
+    }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://repo.spring.io/plugins-release' }
+        maven {
+            name "typesafe-maven-release"
+            url "https://repo.typesafe.com/typesafe/maven-releases"
+        }
+        maven {
+            name "Spark Packages Repo"
+            url "https://dl.bintray.com/spark-packages/maven"
+        }
+        maven {
+            name "Confluent"
+            url "https://packages.confluent.io/maven/"
+        }
+        maven {
+            name "jitpack"
+            url 'https://jitpack.io'
+        }
+        ivy {
+            name "typesafe-ivy-release"
+            url "https://repo.typesafe.com/typesafe/ivy-releases"
+            layout "ivy"
+        }
+    }
+
+    dependencies {
+        classpath "com.github.jengelman.gradle.plugins:shadow:${gradleShadowVersion}"
+        classpath "gradle.plugin.net.nemerosa:versioning:${gradleVersioningPluginVersion}"
+        classpath "com.github.davidmc24.gradle.plugin:gradle-avro-plugin:${gradleAvroPluginVersion}"
+
+        // classpath "gradle.plugin.com.github.maiflai:gradle-scalatest:${gradleScalaTestVersion}"
+        // classpath "com.adarshr:gradle-test-logger-plugin:${gradleTestLoggerVersion}"
+    }
+}
+
+allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'scala'
+
+    // apply plugin: 'com.adarshr.test-logger'
+    // apply plugin: "com.github.maiflai.scalatest"
+
+    repositories {
+        mavenCentral()
+        maven { url "https://jcenter.bintray.com" }
+        maven {
+            name "Confluent"
+            url "https://packages.confluent.io/maven/"
+        }
+    }
+
+    ext {
+        // Scala
+        scalaVersionRevision = '12'
+
+        // Spark
+        scalaSparkVersion = '2.12'
+        sparkVersion = "3.2.0"
+        confluentVersion = "5.3.4"
+
+        // Flink
+        kafkaClientVersion = "2.6.2"
+
+        // AWS
+        awsSdkVersion = '1.12.111'
+        awsHadoopVersion = '3.3.1'
+
+        // Utility
+        typesafeConfigVersion = "1.3.3"
+        shapelessVersion = "2.3.3"
+        pureconfigVersion = "0.17.0"
+        json4sVersion = '3.6.5'
+        avroVersion = '1.10.2'
+        semverVresion = '2.2.0'
+        scalaHttpVersion = "2.0.0-RC6"
+
+        // Logging
+        slf4jVersion = '1.7.30'
+        log4jVersion = '2.14.1'
+
+        // Test
+        scalaTestVersion = '3.2.5'
+        junit5Version = '5.5.2'
+    }
+
+    dependencies {
+        implementation("org.apache.commons:commons-lang3:3.12.0")
+
+        implementation("com.typesafe:config:${typesafeConfigVersion}")
+        implementation("com.github.pureconfig:pureconfig_${scalaSparkVersion}:${pureconfigVersion}")
+        implementation("com.vdurmont:semver4j:${semverVresion}")
+
+        // test
+        testImplementation("org.scalatest:scalatest_${scalaSparkVersion}:${scalaTestVersion}")
+        testImplementation "org.junit.platform:junit-platform-launcher:1.7.1"
+        testRuntimeOnly "org.junit.platform:junit-platform-engine:1.7.1"
+        testImplementation("org.junit.jupiter:junit-jupiter-api:${junit5Version}")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junit5Version}")
+        testRuntimeOnly "co.helmethair:scalatest-junit-runner:0.1.8"
+    }
+}
+
+subprojects {
+    targetCompatibility = 1.8
+    sourceCompatibility = 1.8
+    [compileJava, compileTestJava]*.options.collect {
+        options -> options.encoding = 'UTF-8'
+    }
+
+    task wrapper(type: Wrapper) {
+        gradleVersion = '6.8.1'
+    }
+
+    tasks.withType(ScalaCompile) {
+        configure(scalaCompileOptions.forkOptions) {
+            memoryMaximumSize = '2g'
+            jvmArgs = ['-XX:MaxMetaspaceSize=512m']
+        }
+    }
+
+    compileScala {
+        targetCompatibility = "1.8"
+        sourceCompatibility = "1.8"
+        scalaCompileOptions.additionalParameters = [""] // -opt:l:method
+    }
+    compileTestScala {
+        scalaCompileOptions.additionalParameters = ["-Yrangepos"]
+    }
+
+    test {
+        useJUnitPlatform {
+            includeEngines 'scalatest'
+            testLogging {
+                events("passed", "skipped", "failed")
+            }
+        }
+
+        filter {
+            includeTestsMatching "*Spec"
+        }
+    }
+
+    configurations {
+        localCompile {
+            transitive = true
+        }
+    }
+
+}
