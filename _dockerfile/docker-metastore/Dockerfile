@@ -8,8 +8,7 @@ ENV AWS_SDK_VERSION=1.11.271
 
 ENV HADOOP_HOME=/opt/hadoop-${HADOOP_VERSION}
 ENV HIVE_HOME=/opt/apache-hive-${METASTORE_VERSION}-bin
-# Include additional jars
-ENV HADOOP_CLASSPATH=/opt/hadoop-${METASTORE_VERSION}/share/hadoop/tools/lib/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar:/opt/hadoop-${METASTORE_VERSION}/share/hadoop/tools/lib/hadoop-aws-${METASTORE_VERSION}.jar
+ENV HADOOP_CLASSPATH=/opt/hadoop-${HADOOP_VERSION}/share/hadoop/tools/lib/aws-java-sdk-bundle-${AWS_SDK_VERSION}.jar:/opt/hadoop-${HADOOP_VERSION}/share/hadoop/tools/lib/hadoop-aws-${HADOOP_VERSION}.jar
 
 # BIN
 RUN apt-get update && \
@@ -28,7 +27,9 @@ RUN curl -L https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java
         rm -rf  mysql-connector-java-8.0.19
 
 # CONFIG
-COPY conf ${HIVE_HOME}/conf
+COPY conf/hive-site.xml ${HIVE_HOME}/conf/hive-site.xml
+RUN ls -alh ${HADOOP_HOME}/etc/hadoop/
+RUN ls -alh ${HIVE_HOME}/conf/
 COPY scripts/entrypoint.sh /entrypoint.sh
 
 # UTILS
