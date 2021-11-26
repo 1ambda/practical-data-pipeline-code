@@ -3,3 +3,5 @@
 _assets/
 _datasets/
 !.gitkeep
+
+*/.ipynb_checkpoints/
