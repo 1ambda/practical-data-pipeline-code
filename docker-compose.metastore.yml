@@ -58,9 +58,10 @@ services:
       - /bin/sh
       - -c
       - |
-        sleep 10;
+        sleep 15;
         /entrypoint.sh
     ports:
       - "9083:9083"
     depends_on:
       - mysql
+      - minio
