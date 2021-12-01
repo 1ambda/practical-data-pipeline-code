@@ -38,14 +38,14 @@ RUN apt-get -q update && apt-get -qy install netcat wget
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
+# ENV
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # USER
 RUN groupadd -r hadoop --gid=1001 && \
     useradd -r -g hadoop --uid=1001 -d ${HIVE_HOME} hadoop && \
     chown hadoop:hadoop -R ${HIVE_HOME}
-
-# ENV
-ENV TZ=Asia/Seoul
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 USER hadoop
 WORKDIR $HIVE_HOME

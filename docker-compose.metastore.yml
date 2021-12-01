@@ -58,7 +58,7 @@ services:
       - /bin/sh
       - -c
       - |
-        sleep 15;
+        sleep 10;
         /entrypoint.sh
     ports:
       - "9083:9083"

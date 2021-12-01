@@ -1,0 +1,51 @@
+version: '3.6'
+services:
+  presto-coordinator:
+    container_name: presto-coordinator
+    build:
+      context: _dockerfile/docker-presto
+      dockerfile: Dockerfile
+    environment:
+      - PRESTO_NODE_ID=presto-coordinator
+    ports:
+      - "8889:8080"
+    volumes:
+      - ./_dockerfile/docker-presto/etc/catalog:/opt/presto/etc/catalog
+
+  presto-worker-01:
+    container_name: presto-worker-01
+    build:
+      context: _dockerfile/docker-presto
+      dockerfile: Dockerfile
+    environment:
+      - PRESTO_COORDINATOR=presto-coordinator
+      - PRESTO_NODE_ID=presto-worker-01
+    volumes:
+      - ./_dockerfile/docker-presto/etc/catalog:/opt/presto/etc/catalog
+    depends_on:
+      - presto-coordinator
+    command:
+      - /bin/sh
+      - -c
+      - |
+        sleep 20;
+        /entrypoint.sh
+
+  presto-worker-02:
+    container_name: presto-worker-02
+    build:
+      context: _dockerfile/docker-presto
+      dockerfile: Dockerfile
+    environment:
+      - PRESTO_COORDINATOR=presto-coordinator
+      - PRESTO_NODE_ID=presto-worker-02
+    volumes:
+      - ./_dockerfile/docker-presto/etc/catalog:/opt/presto/etc/catalog
+    depends_on:
+      - presto-coordinator
+    command:
+      - /bin/sh
+      - -c
+      - |
+        sleep 20;
+        /entrypoint.sh
