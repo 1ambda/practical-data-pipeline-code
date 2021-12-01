@@ -14,7 +14,7 @@
 
     <property>
         <name>javax.jdo.option.ConnectionURL</name>
-        <value>jdbc:mysql://mysql:3306/metastore_db</value>
+        <value>jdbc:mysql://mysql:3306/metastore_db?createDatabaseIfNotExist=true</value>
     </property>
 
     <property>

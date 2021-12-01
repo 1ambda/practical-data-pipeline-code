@@ -39,11 +39,15 @@ ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 # USER
-RUN groupadd -r hive --gid=1000 && \
-    useradd -r -g hive --uid=1000 -d ${HIVE_HOME} hive && \
-    chown hive:hive -R ${HIVE_HOME}
+RUN groupadd -r hadoop --gid=1001 && \
+    useradd -r -g hadoop --uid=1001 -d ${HIVE_HOME} hadoop && \
+    chown hadoop:hadoop -R ${HIVE_HOME}
 
-USER hive
+# ENV
+ENV TZ=Asia/Seoul
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+USER hadoop
 WORKDIR $HIVE_HOME
 EXPOSE 9083
 
