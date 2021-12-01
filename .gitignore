@@ -1,7 +1,8 @@
 ./idea
 .DS_Store
 _assets/
-_datasets/
 !.gitkeep
+_datasets/airbnb/*.csv
+_datasets/ecommerce/*.csv
 
 */.ipynb_checkpoints/
