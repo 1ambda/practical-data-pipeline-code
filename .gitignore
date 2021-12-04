@@ -6,3 +6,6 @@ _datasets/airbnb/*.csv
 _datasets/ecommerce/*.csv
 
 */.ipynb_checkpoints/
+
+derby.log
+metastore_db
