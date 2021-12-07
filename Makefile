@@ -70,6 +70,17 @@ compose.presto: compose.prepare
 		-f docker-compose.presto.yml \
 		up --build
 
+.PHONY: compose.aws
+compose.aws: compose.aws
+	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Running docker-compose"
+	@ docker stop $(docker ps -a -q) || true
+	@ docker rm -f $(docker ps -a -q) || true
+	@ docker volume rm $(docker volume ls -f dangling=true -q) || true
+	@ docker compose -f docker-compose.aws.yml rm -fsv || true
+	@ DOCKER_HOST_IP=$(DOCKER_HOST_IP) docker compose \
+		-f docker-compose.aws.yml \
+		up --build
+
 .PHONY: compose.clean
 compose.clean:
 	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Starting: Cleaning docker resources"
@@ -84,6 +95,19 @@ compose.clean:
 	@ rm -rf metastore_db
 	@ echo "\n-----------------------------------------"
 	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Finished: Cleaning docker resources"
+
+.PHONY: compose.storage-all
+compose.storage-all: compose.storage-all
+	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Running docker-compose"
+	@ docker stop $(docker ps -a -q) || true
+	@ docker rm -f $(docker ps -a -q) || true
+	@ docker volume rm $(docker volume ls -f dangling=true -q) || true
+	@ docker compose -f docker-compose.aws.yml rm -fsv || true
+	@ DOCKER_HOST_IP=$(DOCKER_HOST_IP) docker compose \
+		-f docker-compose.storage.yml \
+		-f docker-compose.aws.yml \
+		-f docker-compose.kafka.yml \
+		up --build
 
 ##
 ## Storage CLIs

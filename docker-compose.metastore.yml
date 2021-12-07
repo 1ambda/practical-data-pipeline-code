@@ -44,8 +44,8 @@ services:
       /bin/sh -c "
       /usr/bin/mc alias set myminio http://minio:9000 admin admin12345;
       /usr/bin/mc mb myminio/udon-data-lake || true;
-      /usr/bin/mc admin user add myminio accesskey secretkey || true;
-      /usr/bin/mc admin policy set myminio readwrite user=accesskey || true;
+      /usr/bin/mc admin user add myminio accesskey accesskey || true;
+      /usr/bin/mc admin policy set myminio readwrite user=secretkey || true;
       exit 0;
       "
 

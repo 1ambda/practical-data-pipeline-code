@@ -1,0 +1,49 @@
+version: '3.7'
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin
+    ports:
+      - "8001:8001"
+    environment:
+      DYNAMO_ENDPOINT: "http://dynamodb-local:8000"
+      AWS_REGION: "ap-northeast-2"
+      AWS_ACCESS_KEY_ID: accesskey
+      AWS_SECRET_ACCESS_KEY: secretkey
+    depends_on:
+      - dynamodb-local
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    environment:
+      - MINIO_ACCESS_KEY=accesskey
+      - MINIO_SECRET_KEY=secretkey
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin12345
+    volumes:
+      - ./_volume/docker-minio:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: server /data --console-address ":9001"
+
+  minio-script:
+    image: minio/mc
+    container_name: minio-script
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      sleep 10s;
+      /usr/bin/mc alias set myminio http://minio:9000 admin admin12345;
+      /usr/bin/mc mb myminio/udon-data-lake || true;
+      /usr/bin/mc admin user add myminio accesskey accesskey || true;
+      /usr/bin/mc admin policy set myminio readwrite user=accesskey || true;
+      exit 0;
+      "
