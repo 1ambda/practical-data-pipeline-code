@@ -4,6 +4,16 @@ MYSQLCLIENT = mycli
 DOCKER_HOST_IP := $(shell ipconfig getifaddr en0)
 
 ##
+## Jupyter
+##
+
+.PHONY: jupyter
+jupyter:
+	@ echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - Preparing docker-compose"
+	@ echo "-----------------------------------------\n"
+	@ jupyter lab --ip=127.0.0.1 --port=8080
+
+##
 ## Compose
 ##
 
