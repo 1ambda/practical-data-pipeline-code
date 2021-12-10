@@ -1,6 +1,7 @@
 package mkt.udon
 
-case class UdonProfileStreamConfig(sinkDynamoTable: String,
+case class UdonProfileStreamConfig(sparkCheckpointLocation: String,
+                                   sinkDynamoTable: String,
                                    sinkDynamoTtlDays: Int,
                                    sourceKafkaBroker: String,
                                    sourceKafkaTopic: String,

@@ -25,9 +25,10 @@ object UdonProfileStream extends SparkBase {
     val dfConverted = dfRaw.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)")
       .as[(String, String)]
 
-    // TODO: checkpointLocation
     val dfWritten = dfConverted.writeStream
+      .queryName("UdonProfileStream")
       .format("console")
+      .option("checkpointLocation", config.sparkCheckpointLocation)
       .start()
 
     dfWritten.awaitTermination()
