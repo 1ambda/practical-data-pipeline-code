@@ -1,6 +1,6 @@
 package mkt.udon.core
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 import java.time.format.DateTimeFormatter
 
 object TimeUtil {
@@ -36,5 +36,11 @@ object TimeUtil {
     val parsed = LocalDate.parse(partition, formatterInput).atStartOfDay()
 
     return java.sql.Timestamp.valueOf(parsed)
+  }
+
+  def getExpireEpochSeconds(expireDays: Int): Long = {
+    val updatedAt = Instant.now().toEpochMilli
+    val expireTtl = (updatedAt + (expireDays * 86400 * 1000)) / 1000
+    return expireTtl
   }
 }

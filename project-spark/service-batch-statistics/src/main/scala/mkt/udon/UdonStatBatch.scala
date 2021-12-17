@@ -94,7 +94,6 @@ object UdonStatBatch extends SparkBase {
          |FROM airbnb_db.property_meta
          |WHERE part = ${partition}
          |""".stripMargin)
-
   }
 
   def readPropertySales(partition: String, session: SparkSession): DataFrame = {
