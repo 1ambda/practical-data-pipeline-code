@@ -4,9 +4,10 @@ import mkt.udon.config.UdonProductPoolBatchConfig
 import mkt.udon.core.Environment
 import mkt.udon.entity.UdonProductPoolEntity
 import mkt.udon.infra.spark.SparkBase
-import mkt.udon.infra.spark.storage.DynamoSink
+import mkt.udon.infra.spark.storage.{DynamoSink, ParquetSink}
 import org.apache.log4j.LogManager
-import org.apache.spark.sql.{DataFrame, SparkSession}
+import org.apache.spark.sql.functions.lit
+import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 import pureconfig.generic.auto._
 
 object UdonProductPoolBatch extends SparkBase {
@@ -36,11 +37,19 @@ object UdonProductPoolBatch extends SparkBase {
       maxElementCount = config.maxElementCount)
 
     /**
-     * 데이터 적재: Parquet
+     * 데이터 저장: Parquet
+     *
+     * `part` 를 파티션 컬럼으로 지정해 추가합니다.
+     * Hive Static Partitioning 을 이용하면 Hive 로 읽을 경우엔 파티셔닝 컬럼이 자동으로 SELECT 시에 붙지만,
+     * Parquet 를 직접 읽을 경우엔 존재하지 않으므로 Parquet 를 직접 읽는 사용자를 위해 추가합니다.
      */
+    val dfPersistedParquet = dsResult.withColumn("part", lit(partitionSnapshot))
+      .repartition(config.parquetPartitionCount)
+    val parquetLocation = ParquetSink.buildLocation(config.parquetPrefix, partitionSnapshot)
+    ParquetSink.write(session, dfPersistedParquet, parquetLocation, SaveMode.valueOf(config.parquetWriteMode))
 
     /**
-     * 데이터 적재: Dynamo
+     * 데이터 저장: Dynamo
      */
     DynamoSink.writePartition(config.dynamoTable, config.dynamoRegion, config.expireDays, dsResult)
   }
