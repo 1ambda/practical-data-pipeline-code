@@ -1,7 +1,7 @@
 package mkt.udon.core
 
-import java.time.{Instant, LocalDate}
 import java.time.format.DateTimeFormatter
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 
 object TimeUtil {
 
@@ -36,6 +36,16 @@ object TimeUtil {
     val parsed = LocalDate.parse(partition, formatterInput).atStartOfDay()
 
     return java.sql.Timestamp.valueOf(parsed)
+  }
+
+  /**
+   * @param raw Assume the passed parameter has UTC timezone
+   */
+  def convertStringToEpochMillis(raw: String): Long = {
+    val formatterInput = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+    val parsed = LocalDateTime.parse(raw.substring(0, 19), formatterInput)
+
+    return parsed.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
   }
 
   def getExpireEpochSeconds(expireDays: Int): Long = {
