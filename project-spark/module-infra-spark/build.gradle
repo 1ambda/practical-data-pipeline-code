@@ -3,7 +3,7 @@ dependencies {
     // shared
     implementation project(path: ':module-core')
 
-    // TODO: provided is not transitive, need to use `apply from`
+    // TODO: 클러스터모드에서 동작시에는 기본 라이브러리는 Jar 에 포함될 필요가 없습니다.
     // spark:
     // - use provided dependencies when building in CI.
     // - use compile dependencies for local testing
@@ -12,7 +12,6 @@ dependencies {
     // }
 
     api("org.apache.spark:spark-core_${scalaSparkVersion}:${sparkVersion}") {
-        exclude group: 'org.apache.hadoop', module: 'hadoop-client'
     }
     api("org.apache.spark:spark-sql_${scalaSparkVersion}:${sparkVersion}")
     api("org.apache.spark:spark-hive_${scalaSparkVersion}:${sparkVersion}")
@@ -22,6 +21,10 @@ dependencies {
     api("org.apache.spark:spark-sql-kafka-0-10_${scalaSparkVersion}:${sparkVersion}")
 
     api("org.apache.hadoop:hadoop-aws:${awsHadoopVersion}")
+    api("org.apache.spark:spark-hadoop-cloud_${scalaSparkVersion}:${sparkVersion}")
+    api("com.amazonaws:aws-java-sdk:${awsSdkVersion}")
+
+    api("mysql:mysql-connector-java:${mysqlDriverVersion}")
 
     api("org.apache.avro:avro:$avroVersion")
     api("org.apache.kafka:kafka-clients:${kafkaClientVersion}")

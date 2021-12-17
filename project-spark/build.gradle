@@ -66,19 +66,22 @@ allprojects {
 
     ext {
         // Scala
-        scalaVersionRevision = '12'
+        scalaVersionRevision = "12"
 
         // Spark
-        scalaSparkVersion = '2.12'
+        scalaSparkVersion = "2.12"
         sparkVersion = "3.2.0"
         confluentVersion = "5.3.4"
 
         // Flink
         kafkaClientVersion = "2.6.2"
 
+        // MySQL
+        mysqlDriverVersion = "8.0.27"
+
         // AWS
-        awsSdkVersion = '1.12.111'
-        awsHadoopVersion = '3.3.1'
+        awsSdkVersion = "1.11.901"
+        awsHadoopVersion = "3.3.1"
 
         // Utility
         typesafeConfigVersion = "1.3.3"
@@ -90,12 +93,12 @@ allprojects {
         scalaHttpVersion = "2.0.0-RC6"
 
         // Logging
-        slf4jVersion = '1.7.30'
-        log4jVersion = '2.14.1'
+        slf4jVersion = "1.7.30"
+        log4jVersion = "2.16.0"
 
         // Test
-        scalaTestVersion = '3.2.5'
-        junit5Version = '5.5.2'
+        scalaTestVersion = "3.2.5"
+        junit5Version = "5.5.2"
     }
 
     dependencies {
