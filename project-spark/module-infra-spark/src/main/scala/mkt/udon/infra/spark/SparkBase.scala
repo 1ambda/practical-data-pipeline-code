@@ -19,14 +19,27 @@ trait SparkBase {
       sessionBuilder = sessionBuilder.config("spark.sql.crossJoin.enabled", true)
     }
 
-    val session = sessionBuilder.getOrCreate()
-
-    // give the full control for the bucket owner
-    // - https://docs.aws.amazon.com/ko_kr/emr/latest/ManagementGuide/emr-s3-acls.html
-    val hadoopConf = session.sparkContext.hadoopConfiguration
-    hadoopConf.set("fs.s3.canned.acl", "BucketOwnerFullControl")
+    session = sessionBuilder.getOrCreate()
 
     session
+  }
+
+  def setupHadoopEnvironment(accessKey: String, secretKey: String): Unit = {
+    if (!Environment.isLocalMode()) return
+
+    /**
+     * 실제 Production 환경에서는
+     * - 설정은 Cluster 의 spark-defaults.conf 환경을 따릅니다.
+     * - AWS Key 는 Machine 의 IAM Role 을 이용합니다.
+     *
+     * 아래 코드에서는 로컬 테스팅을 위해 해당 설정들을 직접 세팅합니다.
+     */
+    val hadoopConf = session.sparkContext.hadoopConfiguration
+
+    hadoopConf.set("fs.s3.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+    hadoopConf.set("fs.s3.canned.acl", "BucketOwnerFullControl")
+    hadoopConf.set("fs.s3a.access.key", accessKey)
+    hadoopConf.set("fs.s3a.secret.key", secretKey)
   }
 
   def main(args: Array[String]): Unit = {
