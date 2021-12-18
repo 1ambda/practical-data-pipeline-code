@@ -1,6 +1,6 @@
-package mkt.udon.entity
+package mkt.udon.core.entity
 
-import mkt.udon.entity.UserProfile.{EVENT_ORDER, EVENT_VIEW}
+import mkt.udon.core.entity.UserProfile.{EVENT_ORDER, EVENT_VIEW}
 
 /**
  * User Profile 에 저장될 View Event 입니다.

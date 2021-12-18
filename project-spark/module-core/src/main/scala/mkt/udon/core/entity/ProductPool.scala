@@ -1,4 +1,4 @@
-package mkt.udon.entity
+package mkt.udon.core.entity
 
 case class ProductPoolElement(id: String, rank: Long)
 

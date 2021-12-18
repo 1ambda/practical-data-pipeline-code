@@ -1,7 +1,7 @@
 package mkt.udon
 
 import mkt.udon.config.UdonProductPoolBatchConfig
-import mkt.udon.core.Environment
+import mkt.udon.core.common.Environment
 import mkt.udon.entity.UdonProductPoolEntity
 import mkt.udon.infra.spark.SparkBase
 import mkt.udon.infra.spark.storage.{DynamoSink, ParquetSink}
@@ -20,7 +20,6 @@ object UdonProductPoolBatch extends SparkBase {
      */
     implicit val configHint = Environment.buildConfigHint[UdonProductPoolBatchConfig]()
     val config = Environment.getConfigOrThrow[UdonProductPoolBatchConfig]
-    setupHadoopEnvironment(config.awsAccessKeyLocal, config.awsSecretKeyLocal)
 
     /**
      * 데이터 추출 및 가공

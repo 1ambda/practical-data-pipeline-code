@@ -1,6 +1,6 @@
 package mkt.udon.infra.spark.storage
 
-import mkt.udon.core.TimeUtil
+import mkt.udon.core.common.TimeUtil
 import org.apache.spark.sql.{DataFrame, SaveMode, SparkSession}
 
 object ParquetSink {

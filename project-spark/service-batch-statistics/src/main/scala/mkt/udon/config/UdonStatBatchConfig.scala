@@ -5,5 +5,4 @@ case class UdonStatBatchConfig(jdbcHost: String, jdbcPort: Int,
                                jdbcSchema: String, jdbcTable: String,
                                jdbcPartitionCount: Int,
                                parquetPrefix: String, parquetWriteMode: String, parquetPartitionCount: Int,
-                               awsAccessKeyLocal: String, awsSecretKeyLocal: String,
                                partitionSnapshot: String)

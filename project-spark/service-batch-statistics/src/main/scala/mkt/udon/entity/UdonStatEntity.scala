@@ -1,6 +1,6 @@
 package mkt.udon.entity
 
-import mkt.udon.core.TimeUtil
+import mkt.udon.core.common.TimeUtil
 import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._

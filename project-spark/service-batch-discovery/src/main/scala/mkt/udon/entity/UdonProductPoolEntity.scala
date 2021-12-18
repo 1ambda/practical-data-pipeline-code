@@ -1,5 +1,6 @@
 package mkt.udon.entity
 
+import mkt.udon.core.entity.{ProductPool, ProductPoolElement}
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.{DataFrame, Dataset, SparkSession}

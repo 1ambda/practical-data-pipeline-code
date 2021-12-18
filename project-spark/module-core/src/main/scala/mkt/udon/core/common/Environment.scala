@@ -1,7 +1,7 @@
-package mkt.udon.core
+package mkt.udon.core.common
 
-import pureconfig._
 import pureconfig.generic.ProductHint
+import pureconfig.{CamelCase, ConfigFieldMapping, ConfigReader, ConfigSource}
 
 import scala.reflect.ClassTag
 

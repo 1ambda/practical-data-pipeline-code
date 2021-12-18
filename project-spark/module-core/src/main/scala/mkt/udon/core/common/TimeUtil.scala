@@ -1,4 +1,4 @@
-package mkt.udon.core
+package mkt.udon.core.common
 
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}

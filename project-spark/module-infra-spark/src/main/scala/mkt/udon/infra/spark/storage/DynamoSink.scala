@@ -2,7 +2,7 @@ package mkt.udon.infra.spark.storage
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder
 import com.amazonaws.services.dynamodbv2.document.{DynamoDB, Item, Table}
-import mkt.udon.core.TimeUtil
+import mkt.udon.core.common.TimeUtil
 import org.apache.spark.sql.Dataset
 import org.json4s.jackson.JsonMethods.parse
 import org.json4s.jackson.Serialization.write
