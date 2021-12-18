@@ -47,4 +47,8 @@ object Environment {
     config
   }
 
+  def getConfigOrThrowForApp[T: ClassTag : ConfigReader](app: String)(implicit productHint: ProductHint[T]): T = {
+    val config = ConfigSource.default.at(mode).at(app).loadOrThrow[T]
+    config
+  }
 }
