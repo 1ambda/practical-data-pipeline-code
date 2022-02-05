@@ -3,3 +3,6 @@
 *.lock.info
 *.tfstate
 *.tfstate.backup
+__tf_state/
+.idea/
+
