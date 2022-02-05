@@ -21,6 +21,7 @@ resource "aws_instance" "bastion_public_01" {
   key_name             = var.bastion_keypair
   iam_instance_profile = var.bastion_profile
 
+  ebs_optimized = true
   root_block_device {
     volume_type           = "gp3"
     volume_size           = "100"
