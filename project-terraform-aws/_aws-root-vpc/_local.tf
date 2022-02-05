@@ -1,5 +1,4 @@
 locals {
-
   environment_development = "development"
   environment_production = "production"
 
