@@ -9,9 +9,6 @@ services:
     environment:
       - MYSQL_DATABASE=metastore_db
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_ROOT_PASSWORD=admin
-      - MYSQL_USER=admin
-      - MYSQL_PASSWORD=admin
       - LANG=C.UTF-8
     volumes:
       - ./_script/docker-mysql/conf/:/etc/mysql/conf.d
@@ -44,8 +41,8 @@ services:
       /bin/sh -c "
       /usr/bin/mc alias set myminio http://minio:9000 admin admin12345;
       /usr/bin/mc mb myminio/udon-data-lake || true;
-      /usr/bin/mc admin user add myminio accesskey accesskey || true;
-      /usr/bin/mc admin policy set myminio readwrite user=secretkey || true;
+      # /usr/bin/mc admin user add myminio accesskey secretkey || true;
+      # /usr/bin/mc admin policy set myminio readwrite user=accesskey || true;
       exit 0;
       "
 
