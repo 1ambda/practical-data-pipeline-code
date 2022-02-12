@@ -1,0 +1,184 @@
+locals {
+  spark_batch_cluster_01 = {
+    name_prefix = local.emr_cluster_spark_batch
+    index = "01"
+    release = local.emr_release_5_32_0
+
+    // terraform doesn't array contained in a map
+    applications = "Hadoop,Ganglia,Spark,Tez,Hive,HCatalog"
+
+    master_instance_type = "m5.xlarge"
+    master_instance_size = 1
+    master_spot_enabled = false
+    master_spot_bid_price = local.spot_bid_price_r5xlarge
+
+    core_instance_type = "m5.xlarge"
+    core_instance_size = 1
+    core_spot_enabled = false
+    core_spot_bid_price = local.spot_bid_price_r5xlarge
+
+    task_instance_type = "r5.xlarge"
+    task_instance_size = 1
+    task_spot_enabled = true
+    task_spot_bid_price = local.spot_bid_price_r5xlarge
+
+    task_asg_enabled = false
+    task_asg_min_capacity = 1
+    task_asg_max_capacity = 1
+    task_asg_decrease_threshold = 15.0
+    task_asg_increase_threshold = 75.0
+
+    root_ebs_volume_size = 100
+    master_ebs_volume_size = 300
+    core_ebs_volume_size = 300
+    task_ebs_volume_size = 300
+  }
+}
+
+resource "aws_emr_cluster" "spark_batch_cluster_01" {
+  name = "${var.environment}-${lookup(local.spark_batch_cluster_01, "name_prefix")}-${lookup(local.spark_batch_cluster_01, "index")}"
+
+  release_label = lookup(local.spark_batch_cluster_01, "release")
+  applications = split(",", lookup(local.spark_batch_cluster_01, "applications"))
+  # log_uri = ""
+
+  termination_protection = false
+  keep_job_flow_alive_when_no_steps = true
+
+  ec2_attributes {
+    subnet_id = var.emr_subnet
+
+    emr_managed_master_security_group = var.emr_master_managed_sg_id
+    emr_managed_slave_security_group = var.emr_slave_managed_sg_id
+    service_access_security_group = var.emr_service_managed_sg_id
+
+    additional_master_security_groups = var.emr_master_additional_sg_id
+    additional_slave_security_groups = var.emr_slave_additional_sg_id
+
+    instance_profile = var.emr_profile_arn_instance
+    key_name = var.emr_keypair
+  }
+
+  ebs_root_volume_size = lookup(local.spark_batch_cluster_01, "root_ebs_volume_size")
+
+  master_instance_group {
+    // MASTER
+    name = lookup(local.spark_batch_cluster_01, "master_spot_enabled") ? "MasterIG_SPOT" : "MasterIG_STEADY"
+    bid_price = lookup(local.spark_batch_cluster_01, "master_spot_enabled") ? lookup(local.spark_batch_cluster_01, "master_spot_bid_price"): ""
+    instance_type = lookup(local.spark_batch_cluster_01, "master_instance_type")
+    instance_count = lookup(local.spark_batch_cluster_01, "master_instance_size")
+
+    ebs_config {
+      size = lookup(local.spark_batch_cluster_01, "master_ebs_volume_size")
+      type = "gp2"
+    }
+  }
+
+  core_instance_group {
+    // CORE
+    name = lookup(local.spark_batch_cluster_01, "core_spot_enabled") ? "CoreIG_SPOT" : "CoreIG_STEADY"
+    bid_price = lookup(local.spark_batch_cluster_01, "core_spot_enabled") ? lookup(local.spark_batch_cluster_01, "core_spot_bid_price") : ""
+    instance_type = lookup(local.spark_batch_cluster_01, "core_instance_type")
+    instance_count = lookup(local.spark_batch_cluster_01, "core_instance_size")
+
+    ebs_config {
+      size = lookup(local.spark_batch_cluster_01, "core_ebs_volume_size")
+      type = "gp2"
+      volumes_per_instance = 1
+    }
+
+    // disabled ASG for EMR Core Instance Group
+    autoscaling_policy = ""
+  }
+
+  step {
+    name = "Setup Hadoop Debugging"
+    action_on_failure = "TERMINATE_CLUSTER"
+
+    hadoop_jar_step {
+      jar = "command-runner.jar"
+
+      args = [
+        "state-pusher-script",
+      ]
+    }
+  }
+
+  # Optional: ignore outside changes to running cluster steps
+  lifecycle {
+    create_before_destroy = false
+
+    // destory and then create
+    ignore_changes = [
+      step,
+      bootstrap_action,
+      master_instance_group,
+      core_instance_group,
+      log_uri,
+      termination_protection,
+      configurations,
+    ]
+  }
+
+  tags = {
+    Name = "emr-cluster-${var.environment}-${lookup(local.spark_batch_cluster_01, "name_prefix")}-${lookup(local.spark_batch_cluster_01, "index")}"
+    Environment = var.environment
+    Terraform = "true"
+
+    Team = var.team
+
+    Security_level = "low"
+
+    Service = lookup(local.spark_batch_cluster_01, "name_prefix")
+    Server = "analysis"
+
+    Component = "${lookup(local.spark_batch_cluster_01, "name_prefix")}-${var.environment}"
+  }
+
+  service_role = var.emr_profile_arn_cluster
+  autoscaling_role = var.emr_profile_arn_asg
+
+  configurations = {}
+
+  // bootstrap_action {
+  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_update_emr_instance_tag.id}"
+  //   name = data.aws_s3_bucket_object.emr_bootstrap_update_emr_instance_tag.key
+  // }
+
+  // bootstrap_action {
+  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_install_cloudwatch_metric.id}"
+  //   name = data.aws_s3_bucket_object.emr_bootstrap_install_cloudwatch_metric.key
+  // }
+
+  // bootstrap_action {
+  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_setup_ulimit.id}"
+  //   name = data.aws_s3_bucket_object.emr_bootstrap_setup_ulimit.key
+  // }
+}
+
+// TASK Group
+resource "aws_emr_instance_group" "spark_batch_cluster_01_task" {
+  cluster_id = aws_emr_cluster.spark_batch_cluster_01.id
+
+  name = lookup(local.spark_batch_cluster_01, "task_spot_enabled") ? "TaskIG_SPOT_DYNAMIC" : "TaskIG_STEADY_DYNAMIC"
+  instance_type = lookup(local.spark_batch_cluster_01, "task_instance_type")
+  instance_count = lookup(local.spark_batch_cluster_01, "task_instance_size")
+  bid_price = lookup(local.spark_batch_cluster_01, "task_spot_enabled") ? lookup(local.spark_batch_cluster_01, "task_spot_bid_price"): ""
+
+  ebs_config {
+    size = lookup(local.spark_batch_cluster_01, "task_ebs_volume_size")
+    type = "gp2"
+    volumes_per_instance = 1
+  }
+
+  // disabled ASG for EMR Core Instance Group
+  // autoscaling_policy = lookup(local.spark_batch_cluster_01, "task_asg_enabled") ? data.template_file.asg_policy_spark_batch_enabled_01.rendered : ""
+}
+
+data "aws_instance" "emr_master_spark_batch_cluster_01" {
+  filter {
+    name = "private-dns-name"
+    values = [
+      aws_emr_cluster.spark_batch_cluster_01.master_public_dns]
+  }
+}
