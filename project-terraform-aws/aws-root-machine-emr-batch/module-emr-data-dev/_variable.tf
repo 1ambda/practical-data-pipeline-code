@@ -5,8 +5,8 @@ variable "team" {}
 variable "emr_keypair" {}
 
 variable "emr_profile_arn_instance" {}
-variable "emr_profile_arn_cluster" {}
-variable "emr_profile_arn_asg" {}
+variable "emr_role_arn_cluster" {}
+variable "emr_role_arn_asg" {}
 
 variable "vpc_id" {}
 variable "emr_subnet" {}

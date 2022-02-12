@@ -1,0 +1,265 @@
+[
+  {
+    "classification": "httpfs-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hadoop-kms-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "livy-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "zeppelin-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "sqoop-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "oozie-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "presto-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hcatalog-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hcatalog-webhcat-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hive-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "mapred-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hadoop-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "hbase-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "classification": "spark-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  },
+  {
+    "Classification": "hive-site",
+    "Properties": {
+      "javax.jdo.option.ConnectionURL": "jdbc:mysql:\/\/endpoint:3306\/hive_metastore?createDatabaseIfNotExist=true",
+      "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+      "javax.jdo.option.ConnectionUserName": "username",
+      "javax.jdo.option.ConnectionPassword": "password"
+    }
+  },
+  {
+    "Classification": "spark-hive-site",
+    "Properties": {
+      "javax.jdo.option.ConnectionURL": "jdbc:mysql:\/\/endpoint:3306\/hive_metastore?createDatabaseIfNotExist=true",
+      "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
+      "javax.jdo.option.ConnectionUserName": "username",
+      "javax.jdo.option.ConnectionPassword": "password"
+    }
+  },
+  {
+    "Classification": "capacity-scheduler",
+    "Properties": {
+      "yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DominantResourceCalculator",
+      "yarn.scheduler.capacity.maximum-am-resource-percent": "0.8"
+    },
+    "configurations": [
+    ]
+  },
+  {
+    "Classification": "yarn-site",
+    "Properties": {
+      "yarn.scheduler.minimum-allocation-vcores": "1",
+      "yarn.scheduler.maximum-allocation-vcores": "8",
+      "yarn.node-labels.enabled": "true",
+      "yarn.node-labels.am.default-node-label-expression": "CORE"
+    },
+    "configurations": [
+    ]
+  },
+  {
+    "classification": "yarn-env",
+    "properties": {
+    },
+    "configurations": [
+      {
+        "classification": "export",
+        "properties": {
+          "TZ": "Asia/Seoul"
+        },
+        "configurations": [
+        ]
+      }
+    ]
+  }
+]

@@ -16,7 +16,7 @@ resource "aws_security_group" "rds_hive_metastore" {
   vpc_id = var.vpc_id
 }
 
-resource "aws_security_group_rule" "rds_allow_ssh_from_bastion" {
+resource "aws_security_group_rule" "rds_allow_mysql_from_bastion" {
   type      = "ingress"
   from_port = 3306
   to_port   = 3306
@@ -26,4 +26,16 @@ resource "aws_security_group_rule" "rds_allow_ssh_from_bastion" {
   security_group_id = aws_security_group.rds_hive_metastore.id
 
   description = "Bastion"
+}
+
+resource "aws_security_group_rule" "rds_allow_mysql_from_emr" {
+  type      = "ingress"
+  from_port = 3306
+  to_port   = 3306
+  protocol  = "tcp"
+
+  source_security_group_id = aws_security_group.emr_master_managed.id
+  security_group_id = aws_security_group.rds_hive_metastore.id
+
+  description = "emr"
 }

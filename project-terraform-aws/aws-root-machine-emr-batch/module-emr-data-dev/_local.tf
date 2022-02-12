@@ -1,8 +1,8 @@
 locals {
   emr_cluster_spark_batch = "spark-batch"
 
-  emr_release_5_32_0 = "emr-5.32.0"
-  emr_release_6_4_0  = "emr-6.4.0"
+  emr_release_5_34_0 = "emr-5.34.0"
+  emr_release_6_5_0  = "emr-6.5.0"
 }
 
 locals {

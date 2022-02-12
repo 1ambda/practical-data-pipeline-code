@@ -2,19 +2,19 @@ locals {
   spark_batch_cluster_01 = {
     name_prefix = local.emr_cluster_spark_batch
     index = "01"
-    release = local.emr_release_5_32_0
+    release = local.emr_release_5_34_0
 
     // terraform doesn't array contained in a map
     applications = "Hadoop,Ganglia,Spark,Tez,Hive,HCatalog"
 
     master_instance_type = "m5.xlarge"
     master_instance_size = 1
-    master_spot_enabled = false
+    master_spot_enabled = true
     master_spot_bid_price = local.spot_bid_price_r5xlarge
 
     core_instance_type = "m5.xlarge"
     core_instance_size = 1
-    core_spot_enabled = false
+    core_spot_enabled = true
     core_spot_bid_price = local.spot_bid_price_r5xlarge
 
     task_instance_type = "r5.xlarge"
@@ -33,6 +33,10 @@ locals {
     core_ebs_volume_size = 300
     task_ebs_volume_size = 300
   }
+}
+
+data "template_file" "spark_batch_cluster_01_conf" {
+  template = file("${path.root}/_template/template.emr-spark-batch.json")
 }
 
 resource "aws_emr_cluster" "spark_batch_cluster_01" {
@@ -104,14 +108,11 @@ resource "aws_emr_cluster" "spark_batch_cluster_01" {
     }
   }
 
-  # Optional: ignore outside changes to running cluster steps
   lifecycle {
     create_before_destroy = false
-
-    // destory and then create
     ignore_changes = [
       step,
-      bootstrap_action,
+      # bootstrap_action,
       master_instance_group,
       core_instance_group,
       log_uri,
@@ -135,24 +136,31 @@ resource "aws_emr_cluster" "spark_batch_cluster_01" {
     Component = "${lookup(local.spark_batch_cluster_01, "name_prefix")}-${var.environment}"
   }
 
-  service_role = var.emr_profile_arn_cluster
-  autoscaling_role = var.emr_profile_arn_asg
+  service_role = var.emr_role_arn_cluster
+  autoscaling_role = var.emr_role_arn_asg
 
-  configurations = {}
+  /**
+   * 일반적으로 Configuration 파일은 S3 에 존재합니다.
+   * 이 곳에서는 편의를 위해 로컬 파일을 사용합니다.
+   */
+  configurations = data.template_file.spark_batch_cluster_01_conf.rendered
 
+  /**
+   * S3 경로를 학습자 소유의 것으로 바꿀 수 있습니다.
+   */
   // bootstrap_action {
-  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_update_emr_instance_tag.id}"
-  //   name = data.aws_s3_bucket_object.emr_bootstrap_update_emr_instance_tag.key
+  //   name = "emr-system-config"
+  //   path = "s3://practical-data-pipeline/emr/template.emr-system-config.sh"
   // }
 
   // bootstrap_action {
-  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_install_cloudwatch_metric.id}"
-  //   name = data.aws_s3_bucket_object.emr_bootstrap_install_cloudwatch_metric.key
+  //   name = "emr-cloudwatch-collect"
+  //   path = "s3://practical-data-pipeline/emr/template.emr-cloudwatch-collect.sh"
   // }
 
   // bootstrap_action {
-  //   path = "s3://${data.aws_s3_bucket_object.emr_bootstrap_setup_ulimit.id}"
-  //   name = data.aws_s3_bucket_object.emr_bootstrap_setup_ulimit.key
+  //   name = "emr-instance-tag"
+  //   path = "s3://practical-data-pipeline/emr/template.emr-instance-tag.sh"
   // }
 }
 
