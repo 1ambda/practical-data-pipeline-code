@@ -214,8 +214,8 @@
     "Properties": {
       "javax.jdo.option.ConnectionURL": "jdbc:mysql:\/\/endpoint:3306\/hive_metastore?createDatabaseIfNotExist=true",
       "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
-      "javax.jdo.option.ConnectionUserName": "username",
-      "javax.jdo.option.ConnectionPassword": "password"
+      "javax.jdo.option.ConnectionUserName": "root",
+      "javax.jdo.option.ConnectionPassword": "admin1234"
     }
   },
   {
@@ -223,8 +223,8 @@
     "Properties": {
       "javax.jdo.option.ConnectionURL": "jdbc:mysql:\/\/endpoint:3306\/hive_metastore?createDatabaseIfNotExist=true",
       "javax.jdo.option.ConnectionDriverName": "org.mariadb.jdbc.Driver",
-      "javax.jdo.option.ConnectionUserName": "username",
-      "javax.jdo.option.ConnectionPassword": "password"
+      "javax.jdo.option.ConnectionUserName": "root",
+      "javax.jdo.option.ConnectionPassword": "admin1234"
     }
   },
   {
